@@ -7,10 +7,10 @@ CREATE TABLE "user" (
 );
 
 INSERT INTO "user" ("pwd", "name", "profilePic", "email")
-VALUES ('az', 'Pauline', '', 'pauli');
+VALUES ('az', 'Pauline', '', 'pauli@mail.com');
 
 INSERT INTO "user" ("pwd", "name", "profilePic", "email")
-VALUES ('az', 'Adrien', '', 'adri');
+VALUES ('az', 'Adrien', '', 'adri@mail.com');
 
 INSERT INTO "user" ("pwd", "name", "profilePic", "email")
 VALUES ('az', 'Jules', '', 'jule@mail.com');
