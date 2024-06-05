@@ -9,10 +9,40 @@ import { initializeSocketIO } from './socket.js';
 import fastifyMultipart from 'fastify-multipart';
 import fastifyStatic from '@fastify/static';
 import path from 'path';
+import mqtt from 'mqtt';
 
 const hostMyIp = config.hostMyIp;
 const fastify = Fastify({
   logger: true,
+});
+
+
+const brokerUrl = 'mqtt://mqtt.arcplex.fr';
+const port = 2295;
+const topic = 'groupe3/packet/#';
+
+const client = mqtt.connect(brokerUrl, {
+  port,
+  username: 'groupe3',
+  password: '8ae3V7skJoIs',
+});
+
+client.on('connect', () => {
+  client.subscribe([topic], function (err) {
+    if (err) {
+      console.log(topic, err)
+    }
+  })
+});
+
+client.on('message', (topic, message) => {
+  const msg = message.toString()
+  processMessage(msg, topic);
+});
+
+client.on('error', (error) => {
+  console.error('Erreur de connexion MQTT :', error);
+  /*client.reconnect();*/
 });
 
 /*fastify.register(cors, {
