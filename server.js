@@ -17,18 +17,19 @@ const fastify = Fastify({
 });
 
 
-const brokerUrl = 'mqtt://mqtt.arcplex.fr';
-const port = 2295;
-const topic = 'groupe3/packet/#';
+const brokerUrl = 'mqtt://192.168.43.114';
+const port = 1883;
+const topic = 'esp32/#';
 
 const client = mqtt.connect(brokerUrl, {
   port,
-  username: 'groupe3',
-  password: '8ae3V7skJoIs',
+  username: '',
+  password: '',
 });
 
 client.on('connect', () => {
   client.subscribe([topic], function (err) {
+    console.log(`connected to ${brokerUrl} on port ${port}`)
     if (err) {
       console.log(topic, err)
     }
@@ -37,7 +38,7 @@ client.on('connect', () => {
 
 client.on('message', (topic, message) => {
   const msg = message.toString()
-  processMessage(msg, topic);
+  console.log(msg)
 });
 
 client.on('error', (error) => {
