@@ -1,8 +1,12 @@
+import {getSocketIOInstance} from "../socket.js";
 
 export async function getUser(req, res) {
   try {
-    const result = await req.server.pg.query('SELECT * FROM "user"');
-    res.send(result.rows);
+    const io = getSocketIOInstance()
+    io.to('truc').emit('newMessage', 'ping');
+    console.log('should send ping');
+    /*const result = await req.server.pg.query('SELECT * FROM "user"');*/
+    res.send('ok');
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: 'Internal Server Error' });
