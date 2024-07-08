@@ -9,18 +9,17 @@ export async function createRace(req, res) {
     );
     const raceId = raceResult.rows[0].id;
     console.log(raceResult.rows[0])
-    res.send({raceId, raceName});
-    await joinRace(raceId, raceName);
+    res.send({raceId});
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: 'Internal Server Error' });
   }
 }
 
-export async function joinRace(raceId, raceName) {
-  /*const {raceId} = req.body;*/
+export async function joinRace(req, res) {
+  const {raceId} = req.body;
   const io = getSocketIOInstance()
-  io.to(raceName).emit('newMessage', 'ping');
+  io.to(raceId).emit('newMessage', 'ping');
   console.log(raceId);
-  /*res.send('ok');*/
+  res.send('ok');
 }

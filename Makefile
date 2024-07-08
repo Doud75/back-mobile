@@ -27,5 +27,5 @@ prune:
 db: start
 	${EXEC} -ti ${DB_NAME} psql -U user -d VROUM -w
 
-insert-data: truncate
+insert-data:
 	${EXEC} -i ${DB_NAME} psql -U user -d VROUM < database/dump.sql

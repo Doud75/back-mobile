@@ -3,7 +3,7 @@ import {getSocketIOInstance} from "../socket.js";
 export async function getUser(req, res) {
   try {
     const io = getSocketIOInstance()
-    io.to('truc').emit('newMessage', 'ping');
+    io.to(Number(req.query.id)).emit('newMessage', 'ping');
     console.log('should send ping');
     /*const result = await req.server.pg.query('SELECT * FROM "user"');*/
     res.send('ok');
