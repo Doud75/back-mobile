@@ -1,9 +1,13 @@
 import pool from "pg/lib/client.js";
+import {getSocketIOInstance} from "../socket.js";
 
 export async function getPlayer(req, res) {
   try {
-    const result = await req.server.pg.query('SELECT * FROM "player"');
-    res.send(result.rows[0]);
+    const io = getSocketIOInstance()
+    io.to(Number(req.query.id)).emit('newMessage', 'ping');
+    console.log('should send ping');
+    /*const result = await req.server.pg.query('SELECT * FROM "user"');*/
+    res.send('ok');
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: 'Internal Server Error' });
@@ -19,7 +23,7 @@ export async function signIn(req, res) {
   try {
     console.log('back')
     const { username, ip } = req.body;
-    
+
     const playerResult = await req.server.pg.query('SELECT * FROM "player" WHERE username = $1', [username]);
 
     if (playerResult.rows.length > 0) {
