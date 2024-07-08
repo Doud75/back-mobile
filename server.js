@@ -1,9 +1,8 @@
 import Fastify from 'fastify';
 import process from 'process';
-import userRoute from './routes/user.js';
+import playerRoute from './routes/player.js';
 import raceRoute from './routes/race.js';
 import fastifyPostgres from '@fastify/postgres';
-import cors from '@fastify/cors';
 import config from './config.json' assert { type: 'json' };
 import http from 'http';
 import { initializeSocketIO } from './socket.js';
@@ -61,7 +60,7 @@ fastify.register(fastifyMultipart, {
 
 fastify.register(fastifyStatic, { root: path.join(process.cwd(), 'uploads'),   prefix: '/uploads/', });
 
-fastify.register(userRoute);
+fastify.register(playerRoute);
 fastify.register(raceRoute);
 
 const serverIo = http.createServer(fastify.server);
