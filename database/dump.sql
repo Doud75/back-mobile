@@ -18,7 +18,7 @@ CREATE TABLE "playerRace"
 (
     "id"       SERIAL PRIMARY KEY,
     "playerId" INTEGER REFERENCES "player" ("id"),
-    "raceId"   INTEGER REFERENCES
+    "raceId"   INTEGER REFERENCES "race" ("id"),
 );
 
 INSERT INTO "player" ("username", "ip")
