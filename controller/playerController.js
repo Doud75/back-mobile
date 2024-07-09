@@ -6,8 +6,8 @@ export async function getPlayer(req, res) {
     const io = getSocketIOInstance()
     io.to(Number(req.query.id)).emit('newMessage', 'ping');
     console.log('should send ping');
-    /*const result = await req.server.pg.query('SELECT * FROM "user"');*/
-    res.send('ok');
+    const result = await req.server.pg.query('SELECT * FROM "user"');
+    res.send(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: 'Internal Server Error' });

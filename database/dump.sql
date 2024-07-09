@@ -14,5 +14,12 @@ CREATE TABLE "race"
     "winner"    VARCHAR(255)
 );
 
+CREATE TABLE "playerRace"
+(
+    "id"       SERIAL PRIMARY KEY,
+    "playerId" INTEGER REFERENCES "player" ("id"),
+    "raceId"   INTEGER REFERENCES
+);
+
 INSERT INTO "player" ("username", "ip")
 VALUES ('victo', '192.168.13.12');
