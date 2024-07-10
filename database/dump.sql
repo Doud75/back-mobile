@@ -16,9 +16,11 @@ CREATE TABLE "race"
 
 CREATE TABLE "playerRace"
 (
-    "id"       SERIAL PRIMARY KEY,
-    "playerId" INTEGER REFERENCES "player" ("id"),
-    "raceId"   INTEGER REFERENCES "race" ("id"),
+    "id"        SERIAL PRIMARY KEY,
+    "playerId"  INTEGER,
+    "raceId"  INTEGER,
+    FOREIGN KEY ("playerId") REFERENCES "player"("id"),
+    FOREIGN KEY ("raceId") REFERENCES "race"("id")
 );
 
 INSERT INTO "player" ("username", "ip")
