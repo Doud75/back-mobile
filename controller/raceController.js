@@ -17,9 +17,27 @@ export async function createRace(req, res) {
 }
 
 export async function joinRace(req, res) {
-  const {raceId} = req.body;
-  const io = getSocketIOInstance()
-  io.to(raceId).emit('newMessage', 'ping');
+  const {raceId, formData} = req.body;
   console.log(raceId);
-  res.send('ok');
+  console.log(formData);
+  const io = getSocketIOInstance()
+  io.to(Number(raceId)).emit('newMessage', formData);
+  res.send({
+    data: 'ok'
+  });
+}
+
+export async function getPendingRace(req, res) {
+  const result = await req.server.pg.query('SELECT * FROM "race" where status = \'pending\'');
+  res.send(result.rows);
+}
+
+export async function closeRace(req, res) {
+  const {raceId} = req.body;
+  const raceResult = await req.server.pg.query(
+    'UPDATE "race" SET "status" = \'close\' WHERE "id" = $1 RETURNING id',
+    [raceId]
+  );
+  console.log(raceResult.rows[0])
+  res.send(raceResult.rows[0]);
 }
