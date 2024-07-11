@@ -42,3 +42,13 @@ export async function signIn(req, res) {
     return res.status(500).send({ error: 'Internal Server Error' });
   }
 }
+
+export async function getCloseRaceByPlayer(req, res) {
+  const { playerId } = req.query;
+  const result = await req.server.pg.query(
+    'SELECT * FROM "player" JOIN "playerRace" ON "player".id = "playerRace".playerId JOIN "race" ON "playerRacer".raceId = "race".id WHERE "user".id = $1 AND "race".status = \'close\'', 
+    [playerId]
+  );
+  res.send(result.rows);
+}
+  
