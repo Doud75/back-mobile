@@ -50,13 +50,29 @@ export async function getPendingRace(req, res) {
 }
 
 export async function closeRace(req, res) {
-  const {raceId, winner} = req.body;
+  const {raceId} = req.body;
+  console.log('from close race : ', raceId)
   const raceResult = await req.server.pg.query(
-    'UPDATE "race" SET "status" = \'close\', "winner" = $1 WHERE "id" = $2 RETURNING id',
-    [winner, raceId]
+    'UPDATE "race" SET "status" = \'close\' WHERE "id" = $1 RETURNING id',
+    [raceId]
   );
   const response = {
     courseStatus: 'close'
+  }
+  const io = getSocketIOInstance()
+  io.to(Number(raceId)).emit('newMessage', response);
+  res.send(raceResult.rows[0]);
+}
+
+export async function stopRace(req, res) {
+  const {raceId, winner, raceDuration} = req.body;
+  console.log('from stoped race : ', winner)
+  const raceResult = await req.server.pg.query(
+    'UPDATE "race" SET "winner" = $1, "duration" = $2 WHERE "id" = $3 RETURNING id',
+    [winner, raceDuration, raceId]
+  );
+  const response = {
+    courseStatus: 'stoped and winner seted'
   }
   const io = getSocketIOInstance()
   io.to(Number(raceId)).emit('newMessage', response);

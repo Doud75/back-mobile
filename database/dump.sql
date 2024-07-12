@@ -11,16 +11,17 @@ CREATE TABLE "race"
     "status"    VARCHAR(255) NOT NULL,
     "name"      VARCHAR(255),
     "tourCount" VARCHAR(255) NOT NULL,
-    "winner"    VARCHAR(255)
+    "winner"    VARCHAR(255),
+    "duration"  INTEGER
 );
 
 CREATE TABLE "playerRace"
 (
-    "id"        SERIAL PRIMARY KEY,
-    "playerId"  INTEGER,
-    "raceId"  INTEGER,
-    FOREIGN KEY ("playerId") REFERENCES "player"("id"),
-    FOREIGN KEY ("raceId") REFERENCES "race"("id")
+    "id"       SERIAL PRIMARY KEY,
+    "playerId" INTEGER,
+    "raceId"   INTEGER,
+    FOREIGN KEY ("playerId") REFERENCES "player" ("id"),
+    FOREIGN KEY ("raceId") REFERENCES "race" ("id")
 );
 
 INSERT INTO "player" ("username", "ip")
