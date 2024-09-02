@@ -6,7 +6,7 @@ export async function getPlayer(req, res) {
     const io = getSocketIOInstance()
     io.to(Number(req.query.id)).emit('newMessage', 'ping');
     console.log('should send ping');
-    const result = await req.server.pg.query('SELECT * FROM "user"');
+    const result = await req.server.pg.query('SELECT * FROM "player"');
     res.send(result.rows);
   } catch (err) {
     console.error(err);
