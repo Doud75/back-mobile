@@ -6,8 +6,8 @@ export async function getPlayer(req, res) {
     const io = getSocketIOInstance()
     io.to(Number(req.query.id)).emit('newMessage', 'ping');
     console.log('should send ping');
-    /*const result = await req.server.pg.query('SELECT * FROM "user"');*/
-    res.send('ok');
+    const result = await req.server.pg.query('SELECT * FROM "player"');
+    res.send(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: 'Internal Server Error' });
@@ -42,3 +42,13 @@ export async function signIn(req, res) {
     return res.status(500).send({ error: 'Internal Server Error' });
   }
 }
+
+export async function getCloseRaceByPlayer(req, res) {
+  const { playerId } = req.query;
+  const result = await req.server.pg.query(
+    'SELECT * FROM "player" JOIN "playerRace" ON "player".id = "playerRace".playerId JOIN "race" ON "playerRacer".raceId = "race".id WHERE "user".id = $1 AND "race".status = \'close\'', 
+    [playerId]
+  );
+  res.send(result.rows);
+}
+  
