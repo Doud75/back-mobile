@@ -18,17 +18,16 @@ export async function createRace(req, res) {
 
 export async function joinRace(req, res) {
   const {raceId, formData} = req.body;
-  formData.playerId = 3;
   const playerRace = await req.server.pg.query(
     'INSERT INTO "playerRace" ("raceId", "playerId") VALUES ($1, $2) RETURNING id',
-    [raceId, formData.playerId]
+    [raceId, formData.id]
   );
   const playerRaceId = playerRace.rows[0].id
   const numberOfPlayer = await req.server.pg.query(
     'SELECT count(*) FROM "playerRace" WHERE "playerRace".id = $1',
     [playerRaceId]
   );
-  if (numberOfPlayer.rows[0] === 2) {
+  if (numberOfPlayer.rows[0].count === 2) {
     await req.server.pg.query(
       'UPDATE "race" SET "status" = \'ongoing\' WHERE "id" = $1',
       [raceId]
@@ -41,7 +40,7 @@ export async function joinRace(req, res) {
   const io = getSocketIOInstance()
   io.to(Number(raceId)).emit('newMessage', response);
   res.send({
-    numberOfPlayer
+    numberOfPlayer: numberOfPlayer.rows[0].count
   });
 }
 
@@ -52,9 +51,30 @@ export async function getPendingRace(req, res) {
 
 export async function closeRace(req, res) {
   const {raceId} = req.body;
+  console.log('from close race : ', raceId)
   const raceResult = await req.server.pg.query(
     'UPDATE "race" SET "status" = \'close\' WHERE "id" = $1 RETURNING id',
     [raceId]
   );
+  const response = {
+    courseStatus: 'close'
+  }
+  const io = getSocketIOInstance()
+  io.to(Number(raceId)).emit('newMessage', response);
+  res.send(raceResult.rows[0]);
+}
+
+export async function stopRace(req, res) {
+  const {raceId, winner, raceDuration} = req.body;
+  console.log('from stoped race : ', winner)
+  const raceResult = await req.server.pg.query(
+    'UPDATE "race" SET "winner" = $1, "duration" = $2 WHERE "id" = $3 RETURNING id',
+    [winner, raceDuration, raceId]
+  );
+  const response = {
+    courseStatus: 'stoped and winner seted'
+  }
+  const io = getSocketIOInstance()
+  io.to(Number(raceId)).emit('newMessage', response);
   res.send(raceResult.rows[0]);
 }
