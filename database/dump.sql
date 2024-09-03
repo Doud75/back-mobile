@@ -48,11 +48,11 @@ INSERT INTO "player" ("username", "ip") VALUES ('thomas', '192.168.13.31');
 INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race1', '3', 'victo');
 INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race2', '5', 'alex');
 INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race3', '4', 'maria');
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('ongoing', 'Race4', '6', NULL);
+INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race4', '6', 'victo');
 INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race5', '3', 'john');
 INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race6', '7', 'sophie');
 INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race7', '2', 'julien');
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('ongoing', 'Race8', '5', NULL);
+INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race8', '5', 'julien');
 INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race9', '4', 'amelie');
 INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race10', '6', 'nina');
 

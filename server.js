@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import process from 'process';
 import playerRoute from './routes/player.js';
 import raceRoute from './routes/race.js';
+import statsRoute from './routes/stats.js';
 import fastifyPostgres from '@fastify/postgres';
 import config from './config.json' assert { type: 'json' };
 import http from 'http';
@@ -62,6 +63,7 @@ fastify.register(fastifyStatic, { root: path.join(process.cwd(), 'uploads'),   p
 
 fastify.register(playerRoute);
 fastify.register(raceRoute);
+fastify.register(statsRoute);
 
 const serverIo = http.createServer(fastify.server);
 initializeSocketIO(serverIo);
