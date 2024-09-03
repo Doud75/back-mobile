@@ -8,9 +8,13 @@ export async function getStats(req, res) {
         // on recupere les stats générales (top 3 joueurs avec le plus de victoires)
     // sinon on renvoie une erreur
     const playerId = req.params.playerId;
-    const playerResult = await req.server.pg.query('SELECT * FROM "player" WHERE id = $1', [playerId]);
-    if (playerResult.rows.length > 0) {
-        res.send(playerResult.rows);
+    const player = await req.server.pg.query('SELECT * FROM "player" WHERE id = $1', [playerId]);
+    if (player.rows.length > 0) {
+        // recupere les courses du user 
+        const playerResult = await req.server.pg.query('SELECT * FROM "playerRace" WHERE "playerRace"."playerId" = $1', [playerId]);
+        console.log(`Player races: ${JSON.stringify(playerResult.rows)}`);
+
+        res.send({playerStat : playerResult.rows});
     }
     else {
       return res.status(404).send({ error: 'Player not found' });
@@ -19,4 +23,16 @@ export async function getStats(req, res) {
     console.error(err);
     res.status(500).send({ error: 'Internal Server Error' });
   }
+}
+
+export async function getAllStats(req, res) {
+    try {
+        // on recupere les stats de tous les joueurs
+        // on recupere les stats générales (top 3 joueurs avec le plus de victoires)
+        const result = await req.server.pg.query('SELECT * FROM "playerRace"');
+        res.send(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ error: 'Internal Server Error' });
+    }
 }
