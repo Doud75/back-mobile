@@ -2,19 +2,21 @@ import {getSocketIOInstance} from "../socket.js";
 
 export async function getStats(req, res) {
   try {
-    // on recupere les parametres de la requete = un user id 
-    // on regarde si le user existe
-    // si il existe on recupere les stats du user (username, nb victoire, pour chaque course la durée et le nom du gagnant)
-        // on recupere les stats générales (top 3 joueurs avec le plus de victoires)
-    // sinon on renvoie une erreur
     const playerId = req.params.playerId;
-    const player = await req.server.pg.query('SELECT * FROM "player" WHERE id = $1', [playerId]);
+    const player = await req.server.pg.query('\
+      SELECT "player"."username", COUNT("playerRace"."id") as nbRace\
+      FROM "player" \
+      JOIN "playerRace" ON "player"."id" = "playerRace"."playerId" \
+      WHERE "player"."id" = $1\
+      GROUP BY "player"."username";\
+      ', [playerId]);
     if (player.rows.length > 0) {
-        // recupere les courses du user 
-        const playerResult = await req.server.pg.query('SELECT * FROM "playerRace" WHERE "playerRace"."playerId" = $1', [playerId]);
-        console.log(`Player races: ${JSON.stringify(playerResult.rows)}`);
-
-        const top3 = await req.server.pg.query('\
+        const playerResult = await req.server.pg.query('\
+          SELECT "race"."tourCount", "race"."name" \
+          FROM "playerRace"\
+          JOIN "race" ON "playerRace"."raceId" = "race"."id"\
+          WHERE "playerRace"."playerId" = $1;', [playerId]);
+        const statsGeneral = await req.server.pg.query('\
           SELECT winner, COUNT(*) AS victories \
           FROM "race" \
           WHERE status = \'finished\' \
@@ -22,8 +24,9 @@ export async function getStats(req, res) {
           ORDER BY victories DESC\
           Limit 3;');
         res.send({
+          player : player.rows[0],
           playerStat : playerResult.rows,
-          top3 : top3.rows
+          statsGeneral : statsGeneral.rows
         });
     }
     else {
@@ -37,8 +40,6 @@ export async function getStats(req, res) {
 
 export async function getAllStats(req, res) {
     try {
-        // on recupere les stats de tous les joueurs
-        // on recupere les stats générales (top 3 joueurs avec le plus de victoires)
         const result = await req.server.pg.query('\
           SELECT winner, COUNT(*) AS victories \
           FROM "race" \
