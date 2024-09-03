@@ -14,7 +14,17 @@ export async function getStats(req, res) {
         const playerResult = await req.server.pg.query('SELECT * FROM "playerRace" WHERE "playerRace"."playerId" = $1', [playerId]);
         console.log(`Player races: ${JSON.stringify(playerResult.rows)}`);
 
-        res.send({playerStat : playerResult.rows});
+        const top3 = await req.server.pg.query('\
+          SELECT winner, COUNT(*) AS victories \
+          FROM "race" \
+          WHERE status = \'finished\' \
+          GROUP BY winner \
+          ORDER BY victories DESC\
+          Limit 3;');
+        res.send({
+          playerStat : playerResult.rows,
+          top3 : top3.rows
+        });
     }
     else {
       return res.status(404).send({ error: 'Player not found' });
@@ -29,7 +39,13 @@ export async function getAllStats(req, res) {
     try {
         // on recupere les stats de tous les joueurs
         // on recupere les stats générales (top 3 joueurs avec le plus de victoires)
-        const result = await req.server.pg.query('SELECT * FROM "playerRace"');
+        const result = await req.server.pg.query('\
+          SELECT winner, COUNT(*) AS victories \
+          FROM "race" \
+          WHERE status = \'finished\' \
+          GROUP BY winner \
+          ORDER BY victories DESC\
+          Limit 3;');
         res.send(result.rows);
     } catch (err) {
         console.error(err);
