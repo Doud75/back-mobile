@@ -3,29 +3,43 @@ import {getSocketIOInstance} from "../socket.js";
 export async function getStats(req, res) {
   try {
     const playerId = req.params.playerId;
-    const player = await req.server.pg.query('\
-      SELECT "player"."username", COUNT("playerRace"."id") as nbRace\
-      FROM "player" \
-      JOIN "playerRace" ON "player"."id" = "playerRace"."playerId" \
-      WHERE "player"."id" = $1\
-      GROUP BY "player"."username";\
-      ', [playerId]);
+    const player = await req.server.pg.query(`
+          SELECT 
+            p."username",
+            (SELECT COUNT("playerRace"."id") FROM "playerRace" WHERE "playerRace"."playerId" = p."id") as nbRace,
+            (SELECT COUNT("race"."id") FROM "race" WHERE "race"."winner" = p."username") as nbVictory,
+            (SELECT FLOOR(AVG("race"."duration")) FROM "race" JOIN "playerRace" ON p."id" = "playerRace"."playerId" AND "playerRace"."raceId" = race."id") as avgDuration,
+            (
+              SELECT FLOOR (
+                (
+                  SELECT AVG("race"."duration") 
+                  FROM "race" 
+                    JOIN "playerRace" ON p."id" = "playerRace"."playerId"
+                    AND "playerRace"."raceId" = race."id"
+                ) / (
+                  SELECT SUM(CAST("race"."tourCount" as INT)) 
+                  FROM "race" 
+                    JOIN "playerRace" ON p."id" = "playerRace"."playerId"
+                    AND "playerRace"."raceId" = race."id"
+                )
+              )
+            ) as avgDurationPerTour
+          FROM "player" p
+          WHERE p."id" = $1;
+        `, [playerId]);
     if (player.rows.length > 0) {
-        const playerResult = await req.server.pg.query('\
-          SELECT "race"."tourCount", "race"."name" \
-          FROM "playerRace"\
-          JOIN "race" ON "playerRace"."raceId" = "race"."id"\
-          WHERE "playerRace"."playerId" = $1;', [playerId]);
-        const statsGeneral = await req.server.pg.query('\
-          SELECT winner, COUNT(*) AS victories \
-          FROM "race" \
-          WHERE status = \'finished\' \
-          GROUP BY winner \
-          ORDER BY victories DESC\
-          Limit 3;');
+        const statsGeneral = await req.server.pg.query(`
+          SELECT 
+            p."username",
+            (SELECT COUNT("playerRace"."id") FROM "playerRace" WHERE "playerRace"."playerId" = p."id") as nbRace,
+            (SELECT COUNT("race"."id") FROM "race" WHERE "race"."winner" = p."username") as nbVictory,
+            (SELECT FLOOR(AVG("race"."duration")) FROM "race" JOIN "playerRace" ON p."id" = "playerRace"."playerId" AND "playerRace"."raceId" = race."id") as avgDuration
+          FROM "player" p
+          ORDER BY nbVictory DESC
+          LIMIT 3
+          ;`);
         res.send({
           player : player.rows[0],
-          playerStat : playerResult.rows,
           statsGeneral : statsGeneral.rows
         });
     }
@@ -40,13 +54,38 @@ export async function getStats(req, res) {
 
 export async function getAllStats(req, res) {
     try {
-        const result = await req.server.pg.query('\
-          SELECT winner, COUNT(*) AS victories \
-          FROM "race" \
-          WHERE status = \'finished\' \
-          GROUP BY winner \
-          ORDER BY victories DESC\
-          Limit 3;');
+        // const result = await req.server.pg.query(`
+        //   SELECT "player"."username", count(r."winner") as nbRace
+        //   FROM "player"
+        //     LEFT JOIN "race" AS r ON "player"."username" = r."winner"
+        //     WHERE "player"."id" = 1
+        //   GROUP BY "player"."username";
+        // `);
+        const result = await req.server.pg.query(`
+          SELECT 
+            p."username",
+            (SELECT COUNT("playerRace"."id") FROM "playerRace" WHERE "playerRace"."playerId" = p."id") as nbRace,
+            (SELECT COUNT("race"."id") FROM "race" WHERE "race"."winner" = p."username") as nbVictory,
+            (SELECT FLOOR(AVG("race"."duration")) FROM "race" JOIN "playerRace" ON p."id" = "playerRace"."playerId" AND "playerRace"."raceId" = race."id") as avgDuration,
+            (
+              SELECT FLOOR (
+                (
+                  SELECT AVG("race"."duration") 
+                  FROM "race" 
+                    JOIN "playerRace" ON p."id" = "playerRace"."playerId"
+                    AND "playerRace"."raceId" = race."id"
+                ) / (
+                  SELECT SUM(CAST("race"."tourCount" as INT)) 
+                  FROM "race" 
+                    JOIN "playerRace" ON p."id" = "playerRace"."playerId"
+                    AND "playerRace"."raceId" = race."id"
+                )
+              )
+            ) as avgDurationPerTour
+          FROM "player" p
+          ORDER BY nbVictory DESC
+          LIMIT 3;
+        `);
         res.send(result.rows);
     } catch (err) {
         console.error(err);
