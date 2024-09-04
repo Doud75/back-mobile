@@ -45,16 +45,16 @@ INSERT INTO "player" ("username", "ip") VALUES ('maxime', '192.168.13.29');
 INSERT INTO "player" ("username", "ip") VALUES ('alice', '192.168.13.30');
 INSERT INTO "player" ("username", "ip") VALUES ('thomas', '192.168.13.31');
 
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race1', '3', 'victo');
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race2', '5', 'alex');
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race3', '4', 'maria');
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race4', '6', 'victo');
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race5', '3', 'john');
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race6', '7', 'sophie');
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race7', '2', 'julien');
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race8', '5', 'julien');
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race9', '4', 'amelie');
-INSERT INTO "race" ("status", "name", "tourCount", "winner") VALUES ('finished', 'Race10', '6', 'nina');
+INSERT INTO "race" ("status", "name", "tourCount", "winner", "duration") VALUES ('close', 'Race1', '3', 'victo', 120000);
+INSERT INTO "race" ("status", "name", "tourCount", "winner", "duration") VALUES ('close', 'Race2', '5', 'alex', 300000);
+INSERT INTO "race" ("status", "name", "tourCount", "winner", "duration") VALUES ('close', 'Race3', '4', 'maria', 240000);
+INSERT INTO "race" ("status", "name", "tourCount", "winner", "duration") VALUES ('close', 'Race4', '6', 'victo', 360000);
+INSERT INTO "race" ("status", "name", "tourCount", "winner", "duration") VALUES ('close', 'Race5', '3', 'john', 180000);
+INSERT INTO "race" ("status", "name", "tourCount", "winner", "duration") VALUES ('close', 'Race6', '7', 'sophie', 420000);
+INSERT INTO "race" ("status", "name", "tourCount", "winner", "duration") VALUES ('close', 'Race7', '2', 'julien', 90000);
+INSERT INTO "race" ("status", "name", "tourCount", "winner", "duration") VALUES ('close', 'Race8', '5', 'julien', 300000);
+INSERT INTO "race" ("status", "name", "tourCount", "winner", "duration") VALUES ('close', 'Race9', '4', 'amelie', 240000);
+INSERT INTO "race" ("status", "name", "tourCount", "winner", "duration") VALUES ('close', 'Race10', '6', 'nina', 360000);
 
 INSERT INTO "playerRace" ("playerId", "raceId") VALUES (1, 1);  -- victo participe à Race1
 INSERT INTO "playerRace" ("playerId", "raceId") VALUES (2, 1);  -- alex participe à Race1
