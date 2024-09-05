@@ -29,7 +29,6 @@ export async function getStatsByUser(req, res) {
     `, [playerId]);
     res.send({
       player : player.rows[0],
-      statsGeneral : statsGeneral.rows
     });
   } catch (err) {
     console.error(err);
