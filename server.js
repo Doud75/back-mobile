@@ -44,12 +44,7 @@ client.on('message', (topic, message) => {
 
 client.on('error', (error) => {
   console.error('Erreur de connexion MQTT :', error);
-  /*client.reconnect();*/
 });
-
-/*fastify.register(cors, {
-  origin: 'http://localhost:19006',
-});*/
 
 fastify.register(fastifyPostgres, {
   connectionString: 'postgres://user:password@127.0.0.1:5432/VROUM',
